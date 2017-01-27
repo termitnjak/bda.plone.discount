@@ -42,6 +42,9 @@ class ItemDiscountView(DiscountView):
         ('group_cart_item_discount_form',
          _('group_cart_item_discount_form',
            default=u'Group Rules for Cart Items')),
+        ('coupon_cart_item_discount_form',
+         _('coupon_cart_item_discount_form',
+           default=u'Coupon Rules for Cart Items')),
     ]
 
     @property
