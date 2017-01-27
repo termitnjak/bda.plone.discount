@@ -120,6 +120,20 @@
     permission="bda.plone.discount.ManageDiscount"
     layer="..interfaces.IDiscountExtensionLayer" />
 
+  <browser:page
+    for="..interfaces.IDiscountSettingsEnabled"
+    name="coupon_cart_item_discount_form"
+    class=".forms.CouponCartItemDiscountForm"
+    permission="bda.plone.discount.ManageDiscount"
+    layer="..interfaces.IDiscountExtensionLayer" />
+
+  <browser:page
+    for="zope.component.interfaces.ISite"
+    name="coupon_cart_item_discount_form"
+    class=".forms.CouponCartItemDiscountForm"
+    permission="bda.plone.discount.ManageDiscount"
+    layer="..interfaces.IDiscountExtensionLayer" />
+
   <!-- cart discount forms -->
   <browser:page
     for="zope.component.interfaces.ISite"
@@ -172,6 +186,15 @@
     zcml:condition="have plone-5"
     name="bda.plone.discount.css.map"
     file="discount_p5.css.map"
+    layer="..interfaces.IDiscountExtensionLayer" />
+
+  <!-- viewlets -->
+  <browser:viewlet
+    name="bda.plone.discount.coupon"
+    class=".CouponViewlet"
+    template="coupon_viewlet.pt"
+    manager="plone.app.layout.viewlets.interfaces.IPortalHeader"
+    permission="zope2.View"
     layer="..interfaces.IDiscountExtensionLayer" />
 
 </configure>
