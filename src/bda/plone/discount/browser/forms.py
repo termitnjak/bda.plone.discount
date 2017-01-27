@@ -7,12 +7,14 @@ from bda.plone.discount.interfaces import CEILING_DATETIME
 from bda.plone.discount.interfaces import FLOOR_DATETIME
 from bda.plone.discount.interfaces import FOR_GROUP
 from bda.plone.discount.interfaces import FOR_USER
+from bda.plone.discount.interfaces import FOR_COUPON
 from bda.plone.discount.interfaces import ICartDiscountSettings
 from bda.plone.discount.interfaces import ICartItemDiscountSettings
 from bda.plone.discount.interfaces import IGroupCartDiscountSettings
 from bda.plone.discount.interfaces import IGroupCartItemDiscountSettings
 from bda.plone.discount.interfaces import IUserCartDiscountSettings
 from bda.plone.discount.interfaces import IUserCartItemDiscountSettings
+from bda.plone.discount.interfaces import ICouponCartItemDiscountSettings
 from bda.plone.discount.interfaces import KIND_ABSOLUTE
 from bda.plone.discount.interfaces import KIND_OFF
 from bda.plone.discount.interfaces import KIND_PERCENT
@@ -154,10 +156,13 @@ class DiscountFormBase(YAMLBaseForm):
         for rule in extracted:
             user = ''
             group = ''
+            coupon = ''
             if self.for_attribute == FOR_USER:
                 user = rule['for'] and rule['for'] or user
             if self.for_attribute == FOR_GROUP:
                 group = rule['for'] and rule['for'] or group
+            if self.for_attribute == FOR_COUPON:
+                coupon = rule['for'] and rule['for'] or coupon
             settings.add_rule(self.context,
                               index,
                               rule['kind'],
@@ -167,7 +172,8 @@ class DiscountFormBase(YAMLBaseForm):
                               rule['valid_from'],
                               rule['valid_to'],
                               user=user,
-                              group=group)
+                              group=group,
+                              coupon=coupon)
             index += 1
 
     def next(self, request):
@@ -206,6 +212,15 @@ class GroupDiscountFormBase(DiscountFormBase):
     for_callback = 'javascript:discount_form.autocomplete_group'
     for_mode = 'edit'
 
+class CouponDiscountFormBase(DiscountFormBase):
+    header_template = 'coupon_header.pt'
+    for_attribute = FOR_COUPON
+    for_label = _('discount_form_label_coupon', default=u'Coupon')
+    for_required = _('discount_form_coupon_required',
+                     default=u'Coupon is required')
+#    for_callback = 'javascript:discount_form.autocomplete_group'
+    for_mode = 'edit'
+
 
 class CartItemDiscountForm(DiscountFormBase):
     settings_iface = ICartItemDiscountSettings
@@ -220,6 +235,11 @@ class UserCartItemDiscountForm(UserDiscountFormBase, CartItemDiscountForm):
 class GroupCartItemDiscountForm(GroupDiscountFormBase, CartItemDiscountForm):
     settings_iface = IGroupCartItemDiscountSettings
     action_resource = 'group_cart_item_discount_form'
+
+class CouponCartItemDiscountForm(CouponDiscountFormBase, CartItemDiscountForm):
+    settings_iface = ICouponCartItemDiscountSettings
+    action_resource = 'coupon_cart_item_discount_form'
+
 
 
 class CartDiscountForm(DiscountFormBase):
