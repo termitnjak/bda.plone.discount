@@ -9,6 +9,7 @@ CATEGORY_CART_ITEM = 'cart_item'
 CATEGORY_CART = 'cart'
 FOR_USER = 'user'
 FOR_GROUP = 'group'
+FOR_COUPON = 'coupon'
 KIND_PERCENT = 'percent'
 KIND_OFF = 'off'
 KIND_ABSOLUTE = 'absolute'
@@ -46,6 +47,10 @@ class IUserCartItemDiscountSettings(ICartItemDiscountSettings):
 
 class IGroupCartItemDiscountSettings(ICartItemDiscountSettings):
     """Interface for cart item group discount settings.
+    """
+
+class ICouponCartItemDiscountSettings(ICartItemDiscountSettings):
+    """Interface for cart item coupon discount settings.
     """
 
 
