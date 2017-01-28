@@ -5,6 +5,7 @@ from bda.plone.discount.interfaces import CEILING_DATETIME
 from bda.plone.discount.interfaces import FLOOR_DATETIME
 from bda.plone.discount.interfaces import FOR_GROUP
 from bda.plone.discount.interfaces import FOR_USER
+from bda.plone.discount.interfaces import FOR_COUPON
 from bda.plone.discount.interfaces import ICartDiscountSettings
 from bda.plone.discount.interfaces import ICartItemDiscountSettings
 from bda.plone.discount.interfaces import IDiscountSettings
@@ -12,6 +13,7 @@ from bda.plone.discount.interfaces import IGroupCartDiscountSettings
 from bda.plone.discount.interfaces import IGroupCartItemDiscountSettings
 from bda.plone.discount.interfaces import IUserCartDiscountSettings
 from bda.plone.discount.interfaces import IUserCartItemDiscountSettings
+from bda.plone.discount.interfaces import ICouponCartItemDiscountSettings
 from datetime import datetime
 from plone.uuid.interfaces import IUUID
 from Products.CMFPlone.interfaces import IPloneSiteRoot
@@ -55,6 +57,9 @@ class DiscountRulesCatalogFactory(object):
         # group this rule applies
         group_indexer = NodeAttributeIndexer('group')
         catalog[u'group'] = CatalogFieldIndex(group_indexer)
+        # coupon this rule applies
+        coupon_indexer = NodeAttributeIndexer('coupon')
+        catalog[u'coupon'] = CatalogFieldIndex(coupon_indexer)
         return catalog
 
 
@@ -71,7 +76,7 @@ class PersistendDiscountSettings(object):
     def rules_soup(self):
         return get_soup(self.soup_name, self.context)
 
-    def rules(self, context, date=None, user='', group=''):
+    def rules(self, context, date=None, user='', group='', coupon=''):
         context_uid = uuid.UUID(IUUID(context))
         query = Eq('context_uid', context_uid) & Eq('category', self.category)
         if date is not None:
@@ -79,6 +84,9 @@ class PersistendDiscountSettings(object):
         if self.for_attribute == FOR_USER:
             if group:
                 msg = u'``group`` keyword must not be given if scope is user'
+                raise ValueError(msg)
+            if coupon:
+                msg = u'``coupon`` keyword must not be given if scope is user'
                 raise ValueError(msg)
             if user:
                 query = query & Eq('user', user)
@@ -88,13 +96,27 @@ class PersistendDiscountSettings(object):
             if user:
                 msg = u'``user`` keyword must not be given if scope is group'
                 raise ValueError(msg)
+            if coupon:
+                msg = u'``coupon`` keyword must not be given if scope is group'
+                raise ValueError(msg)
             if group:
                 query = query & Eq('group', group)
             else:
                 query = query & NotEq('group', '')
+        elif self.for_attribute == FOR_COUPON:
+            if group:
+                msg = u'``group`` keyword must not be given if scope is coupon'
+                raise ValueError(msg)
+            if user:
+                msg = u'``user`` keyword must not be given if scope is coupon'
+                raise ValueError(msg)
+            if coupon:
+                query = query & Eq('coupon', coupon)
+            else:
+                query = query & NotEq('coupon', '')
         else:
-            if user or group:
-                msg = u'``user`` and ``group`` keywords must not be given ' +\
+            if user or group or coupon:
+                msg = u'``user`` and ``group`` and ``coupon`` keywords must not be given ' +\
                       u'if scope is general'
                 raise ValueError(msg)
             query = query & Eq('user', '') & Eq('group', '')
@@ -108,7 +130,7 @@ class PersistendDiscountSettings(object):
             del soup[rule]
 
     def add_rule(self, context, index, kind, block, value, threshold,
-                 valid_from, valid_to, user='', group=''):
+                 valid_from, valid_to, user='', group='', coupon=''):
         rule = Record()
         rule.attrs['index'] = index
         assert(isinstance(self.category, str))
@@ -139,6 +161,8 @@ class PersistendDiscountSettings(object):
         rule.attrs['user'] = user
         assert(isinstance(group, str))
         rule.attrs['group'] = group
+        assert(isinstance(coupon, str))
+        rule.attrs['coupon'] = coupon
         self.rules_soup.add(rule)
 
 
@@ -155,6 +179,10 @@ class UserCartItemDiscountSettings(CartItemDiscountSettings):
 @implementer(IGroupCartItemDiscountSettings)
 class GroupCartItemDiscountSettings(CartItemDiscountSettings):
     for_attribute = FOR_GROUP
+
+@implementer(ICouponCartItemDiscountSettings)
+class CouponCartItemDiscountSettings(PersistendDiscountSettings):
+    for_attribute = FOR_COUPON
 
 
 @implementer(ICartDiscountSettings)
