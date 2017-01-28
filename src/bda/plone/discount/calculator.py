@@ -7,6 +7,7 @@ from bda.plone.cart.interfaces import ICartItem
 from bda.plone.cart.interfaces import ICartItemDiscount
 from bda.plone.discount.interfaces import FOR_GROUP
 from bda.plone.discount.interfaces import FOR_USER
+from bda.plone.discount.interfaces import FOR_COUPON
 from bda.plone.discount.interfaces import ICartDiscountSettings
 from bda.plone.discount.interfaces import ICartItemDiscountSettings
 from bda.plone.discount.interfaces import IDiscountSettingsEnabled
@@ -14,6 +15,7 @@ from bda.plone.discount.interfaces import IGroupCartDiscountSettings
 from bda.plone.discount.interfaces import IGroupCartItemDiscountSettings
 from bda.plone.discount.interfaces import IUserCartDiscountSettings
 from bda.plone.discount.interfaces import IUserCartItemDiscountSettings
+from bda.plone.discount.interfaces import ICouponCartItemDiscountSettings
 from bda.plone.discount.interfaces import KIND_ABSOLUTE
 from bda.plone.discount.interfaces import KIND_OFF
 from bda.plone.discount.interfaces import KIND_PERCENT
@@ -27,7 +29,7 @@ from zope.component import queryAdapter
 from zope.component.interfaces import ISite
 from zope.interface import implementer
 from zope.interface import Interface
-
+from zope.globalrequest import getRequest
 
 class RuleLookup(object):
     settings_iface = None
@@ -76,6 +78,9 @@ class GroupItemRulesLookup(RuleLookup):
     settings_iface = IGroupCartItemDiscountSettings
     for_attribute = FOR_GROUP
 
+class CouponItemRulesLookup(RuleLookup):
+    settings_iface = ICouponCartItemDiscountSettings
+    for_attribute = FOR_COUPON
 
 class CartRulesLookup(RuleLookup):
     settings_iface = ICartDiscountSettings
@@ -95,6 +100,7 @@ class RuleAcquierer(object):
     lookup_factory = None
     user_lookup_factory = None
     group_lookup_factory = None
+    coupon_lookup_factory = None
 
     def __init__(self, context):
         self.context = context
@@ -102,6 +108,14 @@ class RuleAcquierer(object):
         self.member = api.user.get_current()
         self.user = None
         self.groups = None
+        
+        request = getRequest()
+        # Check if new coupon form has been submitted and give it priority over cookie
+        self.coupon = request.form.get('couponcode')
+        # If no form has been submitted, check for coupon in the cookie
+        if self.coupon == None:
+            self.coupon = request.get('discount_couponcode')
+        
         if self.member:
             self.user = self.member.getId()
             try:
@@ -120,6 +134,11 @@ class RuleAcquierer(object):
             group_lookup = self.group_lookup_factory(
                 context, self.date, group)
             lookups.append(group_lookup)
+        if self.coupon:
+            try:
+                lookups.append(self.coupon_lookup_factory(context, self.date, self.coupon))
+            except:
+                pass
         lookups.append(self.lookup_factory(context, self.date))
         return lookups
 
@@ -152,6 +171,7 @@ class CartItemRuleAcquirer(RuleAcquierer):
     lookup_factory = ItemRulesLookup
     user_lookup_factory = UserItemRulesLookup
     group_lookup_factory = GroupItemRulesLookup
+    coupon_lookup_factory = CouponItemRulesLookup
 
 
 class CartRuleAcquirer(RuleAcquierer):
