@@ -48,6 +48,15 @@
   <adapter factory=".settings.GroupCartItemDiscountSettings"
            for="Products.CMFPlone.interfaces.IPloneSiteRoot"
            provides=".interfaces.IGroupCartItemDiscountSettings" />
+  
+  <!-- coupon cart item discount settings -->
+  <adapter factory=".settings.CouponCartItemDiscountSettings"
+           for=".interfaces.IDiscountSettingsEnabled"
+           provides=".interfaces.ICouponCartItemDiscountSettings" />
+
+  <adapter factory=".settings.CouponCartItemDiscountSettings"
+           for="Products.CMFPlone.interfaces.IPloneSiteRoot"
+           provides=".interfaces.ICouponCartItemDiscountSettings" />
 
   <!-- cart discount settings -->
   <adapter factory=".settings.CartDiscountSettings"
