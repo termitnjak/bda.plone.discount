@@ -156,6 +156,13 @@
     permission="bda.plone.discount.ManageDiscount"
     layer="..interfaces.IDiscountExtensionLayer" />
 
+ <browser:page
+    for="zope.component.interfaces.ISite"
+    name="coupon_cart_discount_form"
+    class=".forms.CouponCartDiscountForm"
+    permission="bda.plone.discount.ManageDiscount"
+    layer="..interfaces.IDiscountExtensionLayer" />
+
   <!-- generic resources -->
   <browser:resource
     name="bda.plone.discount.js"
