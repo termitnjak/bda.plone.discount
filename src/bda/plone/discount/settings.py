@@ -13,6 +13,7 @@ from bda.plone.discount.interfaces import IGroupCartDiscountSettings
 from bda.plone.discount.interfaces import IGroupCartItemDiscountSettings
 from bda.plone.discount.interfaces import IUserCartDiscountSettings
 from bda.plone.discount.interfaces import IUserCartItemDiscountSettings
+from bda.plone.discount.interfaces import ICouponCartDiscountSettings
 from bda.plone.discount.interfaces import ICouponCartItemDiscountSettings
 from datetime import datetime
 from plone.uuid.interfaces import IUUID
@@ -60,6 +61,7 @@ class DiscountRulesCatalogFactory(object):
         # coupon this rule applies
         coupon_indexer = NodeAttributeIndexer('coupon')
         catalog[u'coupon'] = CatalogFieldIndex(coupon_indexer)
+
         return catalog
 
 
@@ -119,7 +121,7 @@ class PersistendDiscountSettings(object):
                 msg = u'``user`` and ``group`` and ``coupon`` keywords must not be given ' +\
                       u'if scope is general'
                 raise ValueError(msg)
-            query = query & Eq('user', '') & Eq('group', '')
+            query = query & Eq('user', '') & Eq('group', '') & Eq('coupon', '')
         return self.rules_soup.query(query,
                                      sort_index='valid_from',
                                      reverse=True)
@@ -180,8 +182,9 @@ class UserCartItemDiscountSettings(CartItemDiscountSettings):
 class GroupCartItemDiscountSettings(CartItemDiscountSettings):
     for_attribute = FOR_GROUP
 
+
 @implementer(ICouponCartItemDiscountSettings)
-class CouponCartItemDiscountSettings(PersistendDiscountSettings):
+class CouponCartItemDiscountSettings(CartItemDiscountSettings):
     for_attribute = FOR_COUPON
 
 
@@ -197,7 +200,14 @@ class UserCartDiscountSettings(CartDiscountSettings):
     for_attribute = FOR_USER
 
 
+@implementer(ICouponCartDiscountSettings)
+@adapter(IPloneSiteRoot)
+class CouponCartDiscountSettings(CartDiscountSettings):
+    for_attribute = FOR_COUPON
+
+
 @implementer(IGroupCartDiscountSettings)
 @adapter(IPloneSiteRoot)
 class GroupCartDiscountSettings(CartDiscountSettings):
     for_attribute = FOR_GROUP
+
