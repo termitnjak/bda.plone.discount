@@ -23,6 +23,7 @@ Debug print helper::
     ...     print 'valid_to: ' + str(rule.attrs['valid_to'])
     ...     print 'user: ' + rule.attrs['user']
     ...     print 'group: ' + rule.attrs['group']
+    ...     print 'coupon: ' + rule.attrs['coupon']
 
 
 ICartItemDiscountSettings
@@ -68,6 +69,7 @@ Look at rule data::
     valid_to: 2014-04-01 00:00:00
     user: 
     group: 
+    coupon: 
 
 Rules are returned sorted by valid_from, most recent first::
 
@@ -172,7 +174,7 @@ IUserCartItemDiscountSettings
     valid_to: 2100-01-01 00:00:00
     user: max
     group: 
-
+    coupon: 
 
 IGroupCartItemDiscountSettings
 ------------------------------
@@ -206,7 +208,41 @@ IGroupCartItemDiscountSettings
     valid_to: 2100-01-01 00:00:00
     user: 
     group: retailer
+    coupon: 
 
+ICouponCartItemDiscountSettings
+------------------------------
+
+::
+
+    >>> from bda.plone.discount.interfaces import ICouponCartItemDiscountSettings
+    >>> settings = ICouponCartItemDiscountSettings(plone)
+    >>> settings
+    <bda.plone.discount.settings.CouponCartItemDiscountSettings object at ...>
+
+    >>> settings.add_rule(
+    ...     plone, 0, 'percent', False, 10.0,
+    ...     UNSET, UNSET, UNSET, coupon='couponcode')
+
+    >>> rules = [_ for _ in settings.rules(plone)]
+    >>> len(rules)
+    1
+
+    >>> print_rule(rules[0])
+    index: 0
+    category: cart_item
+    context_uid: 77c4390d-1179-44ba-9d57-46d23ac292c6
+    creator: test_user_1_
+    created: ...
+    kind: percent
+    block: False
+    value: 10.0
+    threshold: 
+    valid_from: 2000-01-01 00:00:00
+    valid_to: 2100-01-01 00:00:00
+    user: 
+    group: 
+    coupon: couponcode
 
 ICartDiscountSettings
 ---------------------
@@ -273,6 +309,7 @@ IUserCartDiscountSettings
     valid_to: 2100-01-01 00:00:00
     user: sepp
     group: 
+    coupon:
 
 
 IGroupCartDiscountSettings
@@ -307,7 +344,41 @@ IGroupCartDiscountSettings
     valid_to: 2100-01-01 00:00:00
     user: 
     group: master_dealer
+    coupon:
 
+ICouponCartDiscountSettings
+--------------------------
+
+::
+
+    >>> from bda.plone.discount.interfaces import ICouponCartDiscountSettings
+    >>> settings = ICouponCartDiscountSettings(plone)
+    >>> settings
+    <bda.plone.discount.settings.CouponCartDiscountSettings object at ...>
+
+    >>> settings.add_rule(
+    ...     plone, 0, 'percent', False, 10.0,
+    ...     UNSET, UNSET, UNSET, coupon='couponcode')
+
+    >>> rules = [_ for _ in settings.rules(plone)]
+    >>> len(rules)
+    1
+
+    >>> print_rule(rules[0])
+    index: 0
+    category: cart
+    context_uid: 77c4390d-1179-44ba-9d57-46d23ac292c6
+    creator: test_user_1_
+    created: ...
+    kind: percent
+    block: False
+    value: 10.0
+    threshold: 
+    valid_from: 2000-01-01 00:00:00
+    valid_to: 2100-01-01 00:00:00
+    user: 
+    group: 
+    coupon: couponcode
 
 IDiscountSettingsEnabled
 ------------------------
@@ -339,6 +410,9 @@ IDiscountSettingsEnabled
 
     >>> IGroupCartItemDiscountSettings(folder)
     <bda.plone.discount.settings.GroupCartItemDiscountSettings object at ...>
+
+    >>> ICouponCartItemDiscountSettings(folder)
+    <bda.plone.discount.settings.CouponCartItemDiscountSettings object at ...>
 
     >>> ICartDiscountSettings(folder)
     Traceback (most recent call last):
