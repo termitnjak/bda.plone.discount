@@ -16,6 +16,7 @@ from bda.plone.discount.interfaces import IGroupCartItemDiscountSettings
 from bda.plone.discount.interfaces import IUserCartDiscountSettings
 from bda.plone.discount.interfaces import IUserCartItemDiscountSettings
 from bda.plone.discount.interfaces import ICouponCartItemDiscountSettings
+from bda.plone.discount.interfaces import ICouponCartDiscountSettings
 from bda.plone.discount.interfaces import KIND_ABSOLUTE
 from bda.plone.discount.interfaces import KIND_OFF
 from bda.plone.discount.interfaces import KIND_PERCENT
@@ -95,6 +96,9 @@ class GroupCartRulesLookup(RuleLookup):
     settings_iface = IGroupCartDiscountSettings
     for_attribute = FOR_GROUP
 
+class CouponCartRulesLookup(RuleLookup):
+    settings_iface = ICouponCartDiscountSettings
+    for_attribute = FOR_COUPON
 
 class RuleAcquierer(object):
     lookup_factory = None
@@ -135,10 +139,8 @@ class RuleAcquierer(object):
                 context, self.date, group)
             lookups.append(group_lookup)
         if self.coupon:
-            try:
-                lookups.append(self.coupon_lookup_factory(context, self.date, self.coupon))
-            except:
-                pass
+            lookups.append(self.coupon_lookup_factory(
+                context, self.date, self.coupon))
         lookups.append(self.lookup_factory(context, self.date))
         return lookups
 
@@ -178,6 +180,7 @@ class CartRuleAcquirer(RuleAcquierer):
     lookup_factory = CartRulesLookup
     user_lookup_factory = UserCartRulesLookup
     group_lookup_factory = GroupCartRulesLookup
+    coupon_lookup_factory = CouponCartRulesLookup
 
 
 class DiscountBase(object):
