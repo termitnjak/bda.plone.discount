@@ -25,14 +25,18 @@ class CouponViewlet(base.ViewletBase):
         # Check whether cookie exists
         discount_cookie = self.request.get('discount_couponcode')
         
+        url = self.request.HTTP_REFERER
         # If coupon_code is provided by a user, set a cookie even if it already 
         # exists
         if coupon_code:
             expiry_date = (datetime.now()+timedelta(days=1)).strftime('%c')
             self.request.response.setCookie('discount_couponcode', coupon_code, expires=expiry_date, path='/')
+            self.request.response.redirect(url)
         elif discount_cookie and coupon_code == '':
             # Expire cookie in case if empty form was submitted, but not if site was reloaded
             self.request.response.expireCookie('discount_couponcode', path='/')
+            self.request.response.redirect(url)
+
             
     def existing_coupon_code(self):
         coupon = self.request.form.get('couponcode')
