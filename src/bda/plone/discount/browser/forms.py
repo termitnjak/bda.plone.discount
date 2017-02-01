@@ -15,6 +15,7 @@ from bda.plone.discount.interfaces import IGroupCartItemDiscountSettings
 from bda.plone.discount.interfaces import IUserCartDiscountSettings
 from bda.plone.discount.interfaces import IUserCartItemDiscountSettings
 from bda.plone.discount.interfaces import ICouponCartItemDiscountSettings
+from bda.plone.discount.interfaces import ICouponCartDiscountSettings
 from bda.plone.discount.interfaces import KIND_ABSOLUTE
 from bda.plone.discount.interfaces import KIND_OFF
 from bda.plone.discount.interfaces import KIND_PERCENT
@@ -218,7 +219,7 @@ class CouponDiscountFormBase(DiscountFormBase):
     for_label = _('discount_form_label_coupon', default=u'Coupon')
     for_required = _('discount_form_coupon_required',
                      default=u'Coupon is required')
-#    for_callback = 'javascript:discount_form.autocomplete_group'
+    for_callback = ''
     for_mode = 'edit'
 
 
@@ -236,10 +237,10 @@ class GroupCartItemDiscountForm(GroupDiscountFormBase, CartItemDiscountForm):
     settings_iface = IGroupCartItemDiscountSettings
     action_resource = 'group_cart_item_discount_form'
 
+
 class CouponCartItemDiscountForm(CouponDiscountFormBase, CartItemDiscountForm):
     settings_iface = ICouponCartItemDiscountSettings
     action_resource = 'coupon_cart_item_discount_form'
-
 
 
 class CartDiscountForm(DiscountFormBase):
@@ -258,6 +259,13 @@ class UserCartDiscountForm(UserDiscountFormBase, CartDiscountForm):
     action_resource = 'user_cart_discount_form'
 
 
+class CouponCartDiscountForm(CouponDiscountFormBase, CartDiscountForm):
+    settings_iface = ICouponCartDiscountSettings
+    action_resource = 'coupon_cart_discount_form'
+
+
 class GroupCartDiscountForm(GroupDiscountFormBase, CartDiscountForm):
     settings_iface = IGroupCartDiscountSettings
     action_resource = 'group_cart_discount_form'
+
+
