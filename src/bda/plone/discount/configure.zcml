@@ -70,6 +70,10 @@
   <adapter factory=".settings.GroupCartDiscountSettings"
            provides=".interfaces.IGroupCartDiscountSettings" />
 
+  <!-- coupon cart discount settings -->
+  <adapter factory=".settings.CouponCartDiscountSettings"
+           provides=".interfaces.ICouponCartDiscountSettings" />
+
   <!-- cart item discount calculators -->
   <adapter factory=".calculator.CartItemDiscount"
            provides="bda.plone.cart.interfaces.ICartItemDiscount" />
