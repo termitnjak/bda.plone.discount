@@ -67,3 +67,9 @@ class IUserCartDiscountSettings(ICartDiscountSettings):
 class IGroupCartDiscountSettings(ICartDiscountSettings):
     """Interface for cart group discount settings.
     """
+
+
+class ICouponCartDiscountSettings(ICartDiscountSettings):
+    """Interface for cart coupon discount settings.
+    """
+    
