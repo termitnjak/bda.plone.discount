@@ -5,17 +5,20 @@ from datetime import datetime, timedelta
 
 
 class CouponViewlet(base.ViewletBase):
+    """ This viewlet is used to provide an input field for the coupon code. The
+    viewlet checks for the code and stores it into a cookie. 
 
+    TODO: Make coupon code validation and return the information to the user
+    """
     def render(self):
         if self.available():
             return super(CouponViewlet, self).render()
         return ""
 
     def available(self):
-        """Return whether viewlet should be rendered or not.
-
-        If we are on one of the checkout views return True, otherwise
-        false.
+        """Return whether viewlet should be rendered or not. So far, we show 
+        the viewlet everywhere. 
+        
         """
         return True
 
@@ -35,7 +38,8 @@ class CouponViewlet(base.ViewletBase):
             self.request.response.redirect(url)
         elif discount_cookie and coupon_code == '':
             # Expire cookie in case if empty form was submitted, but not if
-            # site was reloaded
+            # no action has been submitted by a user and the coupon_code is
+            # therefore None
             self.request.response.expireCookie('discount_couponcode', path='/')
             self.request.response.redirect(url)
 
