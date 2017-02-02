@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 #
 from plone.app.layout.viewlets import common as base
-from datetime import datetime, date, time, timedelta
-from bda.plone.discount.calculator import RuleAcquierer
+from datetime import datetime, timedelta
+
+
 class CouponViewlet(base.ViewletBase):
 
     def render(self):
@@ -19,28 +20,28 @@ class CouponViewlet(base.ViewletBase):
         return True
 
     def update(self):
-
         # Check for user input
         coupon_code = self.request.form.get('couponcode')
         # Check whether cookie exists
         discount_cookie = self.request.get('discount_couponcode')
-        
+
         url = self.request.HTTP_REFERER
-        # If coupon_code is provided by a user, set a cookie even if it already 
+        # If coupon_code is provided by a user, set a cookie even if it already
         # exists
         if coupon_code:
             expiry_date = (datetime.now()+timedelta(days=1)).strftime('%c')
-            self.request.response.setCookie('discount_couponcode', coupon_code, expires=expiry_date, path='/')
+            self.request.response.setCookie('discount_couponcode', coupon_code,
+                                            expires=expiry_date, path='/')
             self.request.response.redirect(url)
         elif discount_cookie and coupon_code == '':
-            # Expire cookie in case if empty form was submitted, but not if site was reloaded
+            # Expire cookie in case if empty form was submitted, but not if
+            # site was reloaded
             self.request.response.expireCookie('discount_couponcode', path='/')
             self.request.response.redirect(url)
 
-            
     def existing_coupon_code(self):
         coupon = self.request.form.get('couponcode')
         # If no form has been submitted, check for coupon in the cookie
-        if coupon == None:
+        if coupon is None:
             coupon = self.request.get('discount_couponcode')
         return coupon

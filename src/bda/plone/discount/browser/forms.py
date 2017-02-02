@@ -213,6 +213,7 @@ class GroupDiscountFormBase(DiscountFormBase):
     for_callback = 'javascript:discount_form.autocomplete_group'
     for_mode = 'edit'
 
+
 class CouponDiscountFormBase(DiscountFormBase):
     header_template = 'coupon_header.pt'
     for_attribute = FOR_COUPON
@@ -254,6 +255,7 @@ class CartDiscountForm(DiscountFormBase):
             (KIND_OFF, _('off', _('off', default=u'Off'))),
         ]
 
+
 class UserCartDiscountForm(UserDiscountFormBase, CartDiscountForm):
     settings_iface = IUserCartDiscountSettings
     action_resource = 'user_cart_discount_form'
@@ -267,5 +269,3 @@ class CouponCartDiscountForm(CouponDiscountFormBase, CartDiscountForm):
 class GroupCartDiscountForm(GroupDiscountFormBase, CartDiscountForm):
     settings_iface = IGroupCartDiscountSettings
     action_resource = 'group_cart_discount_form'
-
-

@@ -210,4 +210,3 @@ class CouponCartDiscountSettings(CartDiscountSettings):
 @adapter(IPloneSiteRoot)
 class GroupCartDiscountSettings(CartDiscountSettings):
     for_attribute = FOR_GROUP
-

@@ -32,6 +32,7 @@ from zope.interface import implementer
 from zope.interface import Interface
 from zope.globalrequest import getRequest
 
+
 class RuleLookup(object):
     settings_iface = None
     for_attribute = None
@@ -79,9 +80,11 @@ class GroupItemRulesLookup(RuleLookup):
     settings_iface = IGroupCartItemDiscountSettings
     for_attribute = FOR_GROUP
 
+
 class CouponItemRulesLookup(RuleLookup):
     settings_iface = ICouponCartItemDiscountSettings
     for_attribute = FOR_COUPON
+
 
 class CartRulesLookup(RuleLookup):
     settings_iface = ICartDiscountSettings
@@ -96,9 +99,11 @@ class GroupCartRulesLookup(RuleLookup):
     settings_iface = IGroupCartDiscountSettings
     for_attribute = FOR_GROUP
 
+
 class CouponCartRulesLookup(RuleLookup):
     settings_iface = ICouponCartDiscountSettings
     for_attribute = FOR_COUPON
+
 
 class RuleAcquierer(object):
     lookup_factory = None
@@ -112,14 +117,15 @@ class RuleAcquierer(object):
         self.member = api.user.get_current()
         self.user = None
         self.groups = None
-        
+
         request = getRequest()
-        # Check if new coupon form has been submitted and give it priority over cookie
+        # Check if new coupon form has been submitted and give it priority over
+        # cookie
         self.coupon = request.form.get('couponcode')
         # If no form has been submitted, check for coupon in the cookie
-        if self.coupon == None:
+        if self.coupon is None:
             self.coupon = request.get('discount_couponcode')
-        
+
         if self.member:
             self.user = self.member.getId()
             try:
