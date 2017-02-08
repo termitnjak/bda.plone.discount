@@ -1,11 +1,11 @@
 <tal:block i18n:domain="bda.plone.discount">
   <div class="coupon_discount_viewlet" 
-  	   tal:define="couponcode view/existing_coupon_code">
-  	<form action="">
+       tal:define="couponcode view/existing_coupon_code">
+    <form action="">
       <input type="text" name="couponcode" 
       		 value="${couponcode}"
     		 placeholder="Coupon code">
       <input type="submit" value="Submit">
-  	</form> 
+    </form> 
   </div>
 </tal:block>
