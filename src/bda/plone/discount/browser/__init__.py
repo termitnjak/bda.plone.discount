@@ -2,6 +2,15 @@
 #
 from plone.app.layout.viewlets import common as base
 from datetime import datetime, timedelta
+from zope.globalrequest import getRequest
+
+def get_existing_coupon_code(self):
+    request = getRequest()
+    coupon = request.form.get('couponcode')
+    # If no form has been submitted, check for coupon in the cookie
+    if coupon is None:
+        coupon = request.get('discount_couponcode')
+    return coupon
 
 
 class CouponViewlet(base.ViewletBase):
@@ -44,8 +53,4 @@ class CouponViewlet(base.ViewletBase):
             self.request.response.redirect(url)
 
     def existing_coupon_code(self):
-        coupon = self.request.form.get('couponcode')
-        # If no form has been submitted, check for coupon in the cookie
-        if coupon is None:
-            coupon = self.request.get('discount_couponcode')
-        return coupon
+        return get_existing_coupon_code(self)
