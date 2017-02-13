@@ -30,8 +30,7 @@ from zope.component import queryAdapter
 from zope.component.interfaces import ISite
 from zope.interface import implementer
 from zope.interface import Interface
-from zope.globalrequest import getRequest
-
+from bda.plone.discount.browser.__init__ import get_existing_coupon_code
 
 class RuleLookup(object):
     settings_iface = None
@@ -118,13 +117,7 @@ class RuleAcquierer(object):
         self.user = None
         self.groups = None
 
-        request = getRequest()
-        # Check if new coupon form has been submitted and give it priority over
-        # cookie
-        self.coupon = request.form.get('couponcode')
-        # If no form has been submitted, check for coupon in the cookie
-        if self.coupon is None:
-            self.coupon = request.get('discount_couponcode')
+        self.coupon = get_existing_coupon_code(self)
 
         if self.member:
             self.user = self.member.getId()
