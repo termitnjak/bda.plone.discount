@@ -4,6 +4,7 @@ from plone.app.layout.viewlets import common as base
 from datetime import datetime, timedelta
 from zope.globalrequest import getRequest
 
+
 def get_existing_coupon_code(self):
     request = getRequest()
     coupon = request.form.get('couponcode')
@@ -15,7 +16,7 @@ def get_existing_coupon_code(self):
 
 class CouponViewlet(base.ViewletBase):
     """ This viewlet is used to provide an input field for the coupon code. The
-    viewlet checks for the code and stores it into a cookie. 
+    viewlet checks for the code and stores it into a cookie.
 
     TODO: Make coupon code validation and return the information to the user
     """
@@ -25,9 +26,8 @@ class CouponViewlet(base.ViewletBase):
         return ""
 
     def available(self):
-        """Return whether viewlet should be rendered or not. So far, we show 
-        the viewlet everywhere. 
-        
+        """Return whether viewlet should be rendered or not. So far, we show
+        the viewlet everywhere.
         """
         return True
 

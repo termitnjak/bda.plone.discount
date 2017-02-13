@@ -32,6 +32,7 @@ from zope.interface import implementer
 from zope.interface import Interface
 from bda.plone.discount.browser.__init__ import get_existing_coupon_code
 
+
 class RuleLookup(object):
     settings_iface = None
     for_attribute = None
